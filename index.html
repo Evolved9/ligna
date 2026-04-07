@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LIGNA — Furniture × Emir Kolburan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --cream-dark: #ede5d4;
+      --white: #faf8f4;
+      --black: #1a1610;
+      --brown: #3d2e1e;
+      --gold: #b8922a;
+      --gold-dim: rgba(184, 146, 42, 0.4);
+      --gold-faint: rgba(184, 146, 42, 0.1);
+      --gold-line: rgba(184, 146, 42, 0.35);
+      --text: #2a2018;
+      --text-mid: rgba(42, 32, 24, 0.6);
+      --text-faint: rgba(42, 32, 24, 0.18);
+      --steel: #4a4a4a;
+      --font-display: 'Playfair Display', serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── Custom Cursor ── */
+    .cursor {
+      position: fixed;
+      width: 7px; height: 7px;
+      background: var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.2s;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 28px; height: 28px;
+      border: 1px solid var(--gold-dim);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, border-color 0.2s;
+    }
+    body:has(a:hover) .cursor-ring {
+      width: 44px; height: 44px;
+      border-color: var(--gold);
+    }
+
+    /* ── Corner brackets ── */
+    .bracket {
+      position: fixed;
+      width: 24px; height: 24px;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .bracket::before, .bracket::after {
+      content: '';
+      position: absolute;
+      background: var(--gold-dim);
+    }
+    .bracket::before { width: 100%; height: 1px; top: 0; }
+    .bracket::after { width: 1px; height: 100%; top: 0; }
+    .bracket.tl { top: 18px; left: 18px; }
+    .bracket.tr { top: 18px; right: 18px; transform: scaleX(-1); }
+    .bracket.bl { bottom: 18px; left: 18px; transform: scaleY(-1); }
+    .bracket.br { bottom: 18px; right: 18px; transform: scale(-1); }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 22px 52px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 200;
+      transition: background 0.4s, box-shadow 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(245, 240, 232, 0.92);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 1px 0 var(--gold-line);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .nav-logo-mark {
+      width: 26px; height: 26px;
+      border: 1px solid var(--gold-dim);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.03em;
+    }
+    .nav-logo-text {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      color: var(--text-mid);
+      text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: var(--gold);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ── Hero ── */
+    #hero {
+      position: relative;
+      height: 100vh;
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('1Ligna1.png');
+      background-size: cover;
+      background-position: center 40%;
+      transform: scale(1.04);
+      animation: heroReveal 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes heroReveal {
+      from { transform: scale(1.1); opacity: 0; }
+      to   { transform: scale(1.04); opacity: 1; }
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(245,240,232,0.0) 0%,
+        rgba(245,240,232,0.0) 50%,
+        rgba(245,240,232,0.7) 80%,
+        rgba(245,240,232,0.98) 100%
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 52px 60px;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.7s forwards;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(56px, 9vw, 128px);
+      font-weight: 700;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 22px;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.9s forwards;
+    }
+    .hero-title span {
+      display: block;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--gold);
+      font-size: 0.52em;
+      letter-spacing: 0.04em;
+      margin-top: 6px;
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-body);
+      font-size: clamp(13px, 1.3vw, 16px);
+      font-weight: 300;
+      color: var(--text-mid);
+      max-width: 480px;
+      line-height: 1.75;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.1s forwards;
+    }
+
+    .hero-bottom {
+      position: relative;
+      z-index: 2;
+      padding: 0 52px 28px;
+      display: flex;
+      justify-content: flex-end;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.4s forwards;
+    }
+
+    .hero-scroll {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-body);
+      font-size: 9px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      text-decoration: none;
+    }
+    .hero-scroll-line {
+      width: 36px; height: 1px;
+      background: var(--gold-dim);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-scroll-line::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-100%);
+      animation: scanLine 2s 2s infinite;
+    }
+    @keyframes scanLine {
+      0%   { transform: translateX(-100%); }
+      50%  { transform: translateX(0); }
+      100% { transform: translateX(100%); }
+    }
+
+    .progress-bar {
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 2px;
+      width: 0;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+      animation: progressLoad 2.5s 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    }
+    @keyframes progressLoad { to { width: 100%; } }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    /* ── Section base ── */
+    section { position: relative; z-index: 2; }
+
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 44px;
+    }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 20px; height: 1px;
+      background: var(--gold);
+    }
+
+    /* ── Render section (2Ligna2) ── */
+    #render {
+      background: var(--cream-dark);
+      overflow: hidden;
+    }
+
+    .render-image-wrap {
+      position: relative;
+      width: 100%;
+      line-height: 0;
+    }
+    .render-image-wrap img {
+      width: 100%;
+      display: block;
+      transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .render-image-wrap:hover img { transform: scale(1.015); }
+
+    .render-caption {
+      padding: 64px 52px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+      background: var(--white);
+    }
+
+    .render-heading {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 3.5vw, 48px);
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 24px;
+    }
+    .render-heading em {
+      display: block;
+      font-style: italic;
+      font-weight: 400;
+      color: var(--text-mid);
+      font-size: 0.7em;
+      margin-top: 4px;
+    }
+
+    .render-body {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-mid);
+    }
+    .render-body p + p { margin-top: 16px; }
+
+    .render-specs {
+      display: flex;
+      flex-direction: column;
+    }
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--text-faint);
+      transition: border-color 0.2s;
+    }
+    .spec-row:first-child { border-top: 1px solid var(--text-faint); }
+    .spec-row:hover { border-bottom-color: var(--gold-dim); }
+    .spec-key {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+    }
+    .spec-value {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-style: italic;
+      color: var(--text);
+      text-align: right;
+    }
+
+    /* ── Sketch section (3Ligna3) ── */
+    #sketch {
+      background: var(--cream);
+    }
+
+    .sketch-header {
+      padding: 80px 52px 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: end;
+    }
+
+    .sketch-heading {
+      font-family: var(--font-display);
+      font-size: clamp(30px, 3.5vw, 46px);
+      font-weight: 500;
+      line-height: 1.1;
+    }
+    .sketch-intro {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text-mid);
+      padding-top: 8px;
+    }
+
+    .sketch-image-wrap {
+      position: relative;
+      width: 100%;
+      line-height: 0;
+      border-top: 1px solid var(--text-faint);
+      border-bottom: 1px solid var(--text-faint);
+    }
+    .sketch-image-wrap img {
+      width: 100%;
+      display: block;
+    }
+
+    .sketch-process {
+      padding: 60px 52px 80px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--text-faint);
+      border-top: 1px solid var(--text-faint);
+    }
+    .process-item {
+      background: var(--cream);
+      padding: 36px 32px;
+    }
+    .process-num {
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 400;
+      color: var(--gold-dim);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .process-title {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .process-text {
+      font-size: 13.5px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-mid);
+    }
+
+    /* ── Final render (4Ligna4) ── */
+    #final {
+      background: var(--brown);
+    }
+
+    .final-image-wrap {
+      position: relative;
+      width: 100%;
+      line-height: 0;
+    }
+    .final-image-wrap img {
+      width: 100%;
+      display: block;
+      opacity: 0.92;
+    }
+    .final-image-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 60%,
+        rgba(61, 46, 30, 0.7) 100%
+      );
+    }
+
+    .final-caption {
+      padding: 60px 52px 80px;
+      background: var(--brown);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .final-quote {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 2.5vw, 32px);
+      font-weight: 400;
+      font-style: italic;
+      color: var(--cream);
+      line-height: 1.4;
+    }
+    .final-quote strong {
+      font-style: normal;
+      color: var(--gold);
+    }
+
+    .final-tagline {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: rgba(245,240,232,0.55);
+    }
+
+    /* ── About / Identity ── */
+    #identity {
+      padding: 80px 52px 100px;
+      background: var(--white);
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .identity-statement {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 2.8vw, 36px);
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.45;
+      color: var(--text);
+      max-width: 600px;
+    }
+    .identity-statement strong {
+      font-style: normal;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .identity-card {
+      border: 1px solid var(--text-faint);
+      padding: 32px;
+      position: relative;
+      background: var(--cream);
+    }
+    .identity-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 36px; height: 2px;
+      background: var(--gold);
+    }
+    .identity-name {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .identity-title {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+    }
+    .identity-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .identity-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .identity-link:hover { color: var(--gold); }
+    .identity-link-dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--gold-dim);
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .identity-link:hover .identity-link-dot { background: var(--gold); }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--text-faint);
+      padding: 28px 52px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--white);
+      position: relative;
+    }
+    .footer-text {
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+    }
+    .footer-gold-line {
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(90deg, var(--gold), transparent 50%);
+      opacity: 0.5;
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.9s cubic-bezier(0.25, 1, 0.5, 1), transform 0.9s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-delay-1 { transition-delay: 0.12s; }
+    .reveal-delay-2 { transition-delay: 0.24s; }
+    .reveal-delay-3 { transition-delay: 0.38s; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      nav { padding: 18px 24px; }
+      .nav-links { display: none; }
+      .hero-content { padding: 0 24px 44px; }
+      .hero-bottom { padding: 0 24px 22px; }
+      .render-caption { grid-template-columns: 1fr; gap: 40px; padding: 44px 24px; }
+      .sketch-header { grid-template-columns: 1fr; gap: 24px; padding: 56px 24px 36px; }
+      .sketch-process { grid-template-columns: 1fr; padding: 0; }
+      .process-item { padding: 28px 24px; }
+      .final-caption { grid-template-columns: 1fr; gap: 32px; padding: 44px 24px 60px; }
+      #identity { grid-template-columns: 1fr; padding: 56px 24px 72px; }
+      footer { padding: 22px 24px; flex-direction: column; gap: 6px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <div class="bracket tl"></div>
+  <div class="bracket tr"></div>
+  <div class="bracket bl"></div>
+  <div class="bracket br"></div>
+
+  <!-- Nav -->
+  <nav id="nav">
+    <a href="#hero" class="nav-logo">
+      <div class="nav-logo-mark">EK</div>
+      <span class="nav-logo-text">Emir Kolburan</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#render">Collection</a></li>
+      <li><a href="#sketch">Process</a></li>
+      <li><a href="#identity">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero — 1Ligna1.png, no blur -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Furniture × Emir Kolburan — 2025</p>
+      <h1 class="hero-title">
+        LIGNA
+        <span>Furniture Family Concept</span>
+      </h1>
+      <p class="hero-subtitle">
+        Where two opposing materials — wood and steel — find a shared design language within a single form, uniting structure and nature in modular harmony.
+      </p>
+    </div>
+
+    <div class="hero-bottom">
+      <a href="#render" class="hero-scroll">
+        <span class="hero-scroll-line"></span>
+        Explore
+      </a>
+    </div>
+
+    <div class="progress-bar"></div>
+  </section>
+
+  <!-- Render — 2Ligna2.png -->
+  <section id="render">
+    <div class="render-image-wrap reveal">
+      <img src="2Ligna2.png" alt="Ligna Furniture Family — Studio Render" loading="lazy" />
+    </div>
+    <div class="render-caption">
+      <div class="reveal">
+        <div class="section-label">Collection</div>
+        <h2 class="render-heading">
+          Form & Material,<br>Reconciled.
+          <em>Steel cage meets living wood.</em>
+        </h2>
+        <div class="render-body">
+          <p>
+            Ligna is a modular furniture family built on a single paradox: two entirely opposite materials — wood and metal — brought together not in contrast, but in conversation. The welded steel cage provides structure and transparency; the wood panel provides warmth and mass.
+          </p>
+          <p>
+            Each piece in the collection — the coffee table, the side table, the occasional stool — shares the same constructive logic while offering a distinct spatial character. Together they form a coherent domestic system.
+          </p>
+        </div>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="section-label">Specifications</div>
+        <div class="spec-row">
+          <span class="spec-key">Project Type</span>
+          <span class="spec-value">Furniture Family Concept</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Category</span>
+          <span class="spec-value">Tables & Occasional</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Primary Materials</span>
+          <span class="spec-value">Solid Wood, Welded Steel</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Top Surface</span>
+          <span class="spec-value">Tempered Smoked Glass</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Panel Finish</span>
+          <span class="spec-value">Natural Grain / Open Cage</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Tools</span>
+          <span class="spec-value">Rhino 3D, D5 Render</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-key">Year</span>
+          <span class="spec-value">2025</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sketch — 3Ligna3.png -->
+  <section id="sketch">
+    <div class="sketch-header">
+      <div class="reveal">
+        <div class="section-label">Design Process</div>
+        <h2 class="sketch-heading">
+          Six ideas.<br>One resolution.
+        </h2>
+      </div>
+      <p class="sketch-intro reveal reveal-delay-1">
+        The design process began with a structural question: how can a welded wire cage and a curved wood panel coexist not as separate elements, but as a single tectonic unit? Six form studies explored different approaches to this joint — from flush integration to deliberate gap and contrast.
+      </p>
+    </div>
+
+    <div class="sketch-image-wrap reveal">
+      <img src="3Ligna3.png" alt="Ligna — Sketch and Form Studies" loading="lazy" />
+    </div>
+
+    <div class="sketch-process">
+      <div class="process-item reveal">
+        <div class="process-num">01</div>
+        <div class="process-title">Form Studies</div>
+        <p class="process-text">Six panel curvature variations explored how wood bends and terminates — from tight radius arches to gradual sweeps — to determine the final structural posture.</p>
+      </div>
+      <div class="process-item reveal reveal-delay-1">
+        <div class="process-num">02</div>
+        <div class="process-title">Cage Construction</div>
+        <p class="process-text">Two wire grid patterns — diagonal lattice and vertical bar — were tested for visual weight, shadow quality, and structural logic before finalizing the welded cage geometry.</p>
+      </div>
+      <div class="process-item reveal reveal-delay-2">
+        <div class="process-num">03</div>
+        <div class="process-title">Surface Language</div>
+        <p class="process-text">Four surface studies defined the panel's material character: textured wood, open cage, wood-over-cage layering, and a textured repeat — establishing the visual rhythm of the collection.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final — 4Ligna4.png -->
+  <section id="final">
+    <div class="final-image-wrap reveal">
+      <img src="4Ligna4.png" alt="Ligna — Exploded Views and Collection Summary" loading="lazy" />
+    </div>
+    <div class="final-caption">
+      <div class="reveal">
+        <p class="final-quote">
+          A form supported by a strong <strong>grid structure</strong>, completed by natural textures.
+        </p>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <p class="final-tagline">
+          Ligna is a modular furniture collection that adapts to the changing needs of its users — combining function and aesthetics through an honest dialogue between industrial steel and organic wood. Each configuration recombines the same vocabulary; no piece reads as an afterthought.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Identity / About -->
+  <section id="identity">
+    <div class="reveal">
+      <div class="section-label">Designer</div>
+      <p class="identity-statement">
+        Design begins where material honesty and human need <strong>converge</strong> — in the gap between what a thing is made of and what it is made for.
+      </p>
+    </div>
+
+    <div class="identity-card reveal reveal-delay-2">
+      <div class="identity-name">Emir Kolburan</div>
+      <div class="identity-title">Industrial Designer</div>
+      <div class="identity-links">
+        <a href="mailto:emirkolburan09@gmail.com" class="identity-link">
+          <span class="identity-link-dot"></span>
+          emirkolburan09@gmail.com
+        </a>
+        <a href="https://www.behance.net/emirkolburan" target="_blank" class="identity-link">
+          <span class="identity-link-dot"></span>
+          Behance
+        </a>
+        <a href="#" class="identity-link" style="pointer-events:none; opacity:0.4;">
+          <span class="identity-link-dot"></span>
+          Download CV
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <span class="footer-text">© 2025 Emir Kolburan</span>
+    <span class="footer-text">Ligna — Furniture Family Concept</span>
+    <div class="footer-gold-line"></div>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+    function animateRing() {
+      rx += (mx - rx) * 0.11;
+      ry += (my - ry) * 0.11;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
